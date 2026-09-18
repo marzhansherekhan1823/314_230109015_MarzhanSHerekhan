@@ -1,0 +1,55 @@
+# ===========================================================================
+# TASK 1 - Host Silicon Audit (Windows / PowerShell)
+# ===========================================================================
+# Run in Windows PowerShell (no admin needed for most of this):
+#     powershell -ExecutionPolicy Bypass -File task1_audit.ps1
+# or just paste the blocks one at a time.
+#
+# Every number this prints is read from your CPU / firmware. Copy them
+# straight into the Task 1 table - do not round, do not guess.
+# ===========================================================================
+
+Write-Host "`n=== CPU MODEL, CORES, CLOCK ===" -ForegroundColor Cyan
+Get-CimInstance Win32_Processor | Select-Object `
+    Name,
+    Manufacturer,
+    NumberOfCores,
+    NumberOfLogicalProcessors,
+    MaxClockSpeed,
+    CurrentClockSpeed,
+    L2CacheSize,
+    L3CacheSize,
+    AddressWidth,
+    SocketDesignation |
+    Format-List
+
+Write-Host "Note: MaxClockSpeed is the BASE clock. Max BOOST clock is not" -ForegroundColor Yellow
+Write-Host "exposed by WMI - read it from Task Manager > Performance > CPU" -ForegroundColor Yellow
+Write-Host "('Maximum speed'), or from the vendor spec page for this exact part.`n" -ForegroundColor Yellow
+
+Write-Host "=== CACHE MEMORY (L1 / L2 / L3 as reported by firmware) ===" -ForegroundColor Cyan
+Get-CimInstance Win32_CacheMemory | Select-Object `
+    Purpose, Level, InstalledSize, MaxCacheSize, BlockSize, Associativity |
+    Format-Table -AutoSize
+
+Write-Host "Level 3 = L1, Level 4 = L2, Level 5 = L3 in WMI's encoding." -ForegroundColor Yellow
+Write-Host "Sizes are in KB. If L1 is missing or zero, use Task Manager >" -ForegroundColor Yellow
+Write-Host "Performance > CPU, which lists L1/L2/L3 in the bottom-right pane.`n" -ForegroundColor Yellow
+
+Write-Host "=== OS AND KERNEL VERSION ===" -ForegroundColor Cyan
+Get-CimInstance Win32_OperatingSystem | Select-Object `
+    Caption, Version, BuildNumber, OSArchitecture | Format-List
+
+Write-Host "=== NUMA / LOGICAL PROCESSOR TOPOLOGY ===" -ForegroundColor Cyan
+$lp = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
+$pc = (Get-CimInstance Win32_ComputerSystem).NumberOfProcessors
+Write-Host "Physical packages (sockets): $pc"
+Write-Host "Logical processors total   : $lp"
+Write-Host "`(SMT / Hyper-Threading is ON if logical > physical cores.`)`n"
+
+Write-Host "=== SIMD VECTOR EXTENSIONS ===" -ForegroundColor Cyan
+Write-Host "WMI does not expose instruction-set flags. Get them from CPUID:" -ForegroundColor Yellow
+Write-Host "    pip install py-cpuinfo"
+Write-Host "    python -m cpuinfo"
+Write-Host "Then read the 'flags' list for: sse2 sse4_2 avx avx2 fma avx512f"
+Write-Host "Alternative: Sysinternals Coreinfo  ->  coreinfo64.exe -f`n"
