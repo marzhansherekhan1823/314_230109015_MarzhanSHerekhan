@@ -1,0 +1,7 @@
+workers,threading_seconds,multiprocessing_seconds,threading_speedup,multiprocessing_speedup
+1,1.8125,2.1487,1.0,1.0
+2,1.92,1.0088,0.944,2.13
+4,1.7848,0.6644,1.015,3.234
+8,1.9125,0.6177,0.948,3.479
+16,1.8701,0.6366,0.969,3.375
+32,1.8805,0.8944,0.964,2.402

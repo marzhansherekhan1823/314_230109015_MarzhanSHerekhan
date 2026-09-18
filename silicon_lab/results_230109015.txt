@@ -1,0 +1,344 @@
+========================================================================
+ADVANCED PARALLEL PROGRAMMING & ARCHITECTURE
+Laboratory Examination - Empirical Microarchitectural Bottlenecks
+========================================================================
+Student ID      : 230109015
+Timestamp       : 2026-09-18 10:49:24 
+Host            : Windows-11-10.0.26200-SP0
+Python          : CPython 3.14.0
+Logical cores   : 20
+========================================================================
+
+
+########################################################################
+# HARDWARE TOPOLOGY DECLARATION
+# command: python3 collect_hardware.py
+# started: 10:49:24
+########################################################################
+
+
+========================================================================
+WORKSHEET METADATA - HOST DECLARATION
+========================================================================
+Host OS                  : Windows-11-10.0.26200-SP0
+Machine architecture     : AMD64
+Python runtime           : CPython 3.14.0
+OS reported logical cores: 20
+
+========================================================================
+CORE TOPOLOGY (Physical P-cores / E-cores / SMT threads)
+========================================================================
+Name                      : 12th Gen Intel(R) Core(TM) i7-12700H
+NumberOfCores             : 14
+NumberOfLogicalProcessors : 20
+MaxClockSpeed             : 2300
+
+========================================================================
+CACHE HIERARCHY (L1 / L2 / L3)
+========================================================================
+Purpose  MaxCacheSize BlockSize
+-------  ------------ ---------
+L1 Cache          288      1024
+L1 Cache          192      1024
+L2 Cache         7680      1024
+L3 Cache        24576      1024
+L1 Cache          256      1024
+L1 Cache          512      1024
+L2 Cache         4096      1024
+L3 Cache        24576      1024
+
+========================================================================
+MEMORY BUS SPECIFICATION (needed for Q4.2 bandwidth calculation)
+========================================================================
+Speed   Capacity DeviceLocator        SMBIOSMemoryType
+-----   -------- -------------        ----------------
+ 6400 2147483648 Controller0-ChannelA               35
+ 6400 2147483648 Controller0-ChannelB               35
+ 6400 2147483648 Controller0-ChannelC               35
+ 6400 2147483648 Controller0-ChannelD               35
+ 6400 2147483648 Controller1-ChannelA               35
+ 6400 2147483648 Controller1-ChannelB               35
+ 6400 2147483648 Controller1-ChannelC               35
+ 6400 2147483648 Controller1-ChannelD               35
+
+========================================================================
+Q4.2 THEORETICAL PEAK BANDWIDTH FORMULA
+========================================================================
+  Peak GB/s = (MT/s) x (bus width bits / 8) x (number of channels) / 1000
+
+  Worked reference values:
+    DDR4-3200, 64-bit, dual-channel : 3200 x 8 x 2 / 1000 =  51.2 GB/s
+    DDR4-3200, 64-bit, single-chan  : 3200 x 8 x 1 / 1000 =  25.6 GB/s
+    DDR5-4800, 2x32-bit subch, dual : 4800 x 8 x 2 / 1000 =  76.8 GB/s
+    LPDDR5-6400, 128-bit  (M2)      : 6400 x 16    / 1000 = 102.4 GB/s
+    LPDDR5-6400, 256-bit  (M2 Pro)  : 6400 x 32    / 1000 = 204.8 GB/s
+
+  Substitute YOUR module speed and channel count from the section above.
+
+========================================================================
+APPENDIX COMMANDS FOR YOUR OS (run these to paste raw proof)
+========================================================================
+  Get-CimInstance Win32_Processor | Select Name,NumberOfCores
+  wmic cpu get name,NumberOfCores,NumberOfLogicalProcessors
+  Get-CimInstance Win32_CacheMemory
+  wmic memorychip get speed,capacity,devicelocator
+
+[wall clock for this invocation: 4.64s]
+
+
+########################################################################
+# TASK 1 - AMDAHL'S LAW & PHYSICAL SILICON SATURATION
+# command: python3 task1_amdahl.py
+# started: 10:49:29
+########################################################################
+
+OS Reported Logical Cores: 20
+Single Process Baseline Time T(1): 1.9888s
+
+Cores | Time(s) | Observed Speedup | Theoretical Linear
+-------------------------------------------------------
+    1 |  1.6312 |             1.22x |               1.00x
+    2 |  0.8685 |             2.29x |               2.00x
+    4 |  0.5286 |             3.76x |               4.00x
+    8 |  0.5022 |             3.96x |               8.00x
+   12 |  0.5284 |             3.76x |              12.00x
+   16 |  0.6221 |             3.20x |              16.00x
+
+[wall clock for this invocation: 6.77s]
+
+
+########################################################################
+# TASK 2 - CACHE COHERENCE & FALSE SHARING  [TRIAL 1 of 3]
+# command: python3 task2_falsesharing.py
+# started: 10:49:36
+########################################################################
+
+Adjacent Indices (False Sharing): 0.7316s
+Padded Indices (Cache-Aligned):   0.6775s
+Slowdown Factor: 1.08x
+
+[wall clock for this invocation: 1.47s]
+
+
+########################################################################
+# TASK 2 - CACHE COHERENCE & FALSE SHARING  [TRIAL 2 of 3]
+# command: python3 task2_falsesharing.py
+# started: 10:49:37
+########################################################################
+
+Adjacent Indices (False Sharing): 0.6482s
+Padded Indices (Cache-Aligned):   0.7138s
+Slowdown Factor: 0.91x
+
+[wall clock for this invocation: 1.41s]
+
+
+########################################################################
+# TASK 2 - CACHE COHERENCE & FALSE SHARING  [TRIAL 3 of 3]
+# command: python3 task2_falsesharing.py
+# started: 10:49:39
+########################################################################
+
+Adjacent Indices (False Sharing): 0.7761s
+Padded Indices (Cache-Aligned):   0.5921s
+Slowdown Factor: 1.31x
+
+[wall clock for this invocation: 1.41s]
+
+
+########################################################################
+# TASK 3 - SYNCHRONIZATION TAX (unsafe vs locked)
+# command: python3 task3_sync.py
+# started: 10:49:40
+########################################################################
+
+Unsafe: Value = 2,000,000 / 2,000,000 | Time: 0.1356s
+Locked: Value = 2,000,000 / 2,000,000 | Time: 0.3104s
+Contention Cost Multiplier: 2.29x
+
+[wall clock for this invocation: 0.52s]
+
+
+########################################################################
+# TASK 3 - Q3.1 RACE CONDITION FORENSICS
+# command: python3 task3_race_forensics.py
+# started: 10:49:41
+########################################################################
+
+========================================================================
+TASK 3 / Q3.1 - RACE CONDITION FORENSICS
+========================================================================
+Python          : 3.14.0 (cpython)
+GIL             : ENABLED
+Switch interval : 0.005 s (default)
+Threads         : 4   Target sum: 2,000,000
+
+========================================================================
+STAGE 1 - BYTECODE OF THE UNPROTECTED CRITICAL SECTION
+========================================================================
+ 54           RESUME                   0
+              LOAD_FAST_BORROW         0 (self)
+              COPY                     1
+              LOAD_ATTR                0 (val)
+              LOAD_SMALL_INT           1
+              BINARY_OP               13 (+=)
+              SWAP                     2
+              STORE_ATTR               0 (val)
+              LOAD_CONST               1 (None)
+              RETURN_VALUE
+
+Read the sequence: the value is loaded by LOAD_ATTR, incremented by
+BINARY_OP, and written back by STORE_ATTR. Between the load and the
+store there is no CALL, no backward jump and no RESUME - and those
+are precisely the instructions at which CPython tests its eval_breaker
+and may release the GIL. The window in which another thread could
+read a stale value is therefore never opened by this code.
+
+Contrast - the instrumented variant:
+ 69           RESUME                   0
+              LOAD_FAST_BORROW         0 (self)
+              LOAD_ATTR                0 (val)
+              LOAD_GLOBAL              3 (_addend + NULL)
+              CALL                     0
+              BINARY_OP                0 (+)
+              LOAD_FAST_BORROW         0 (self)
+              STORE_ATTR               0 (val)
+              LOAD_CONST               0 (None)
+              RETURN_VALUE
+
+Here a CALL (and the callee's RESUME) sits between the load of
+self.val and the STORE_ATTR that writes it back. That is a legal
+GIL hand-off point inside the read-modify-write sequence.
+
+========================================================================
+STAGE 2 - PRESCRIBED CODE, DEFAULT 5 ms SWITCH INTERVAL
+========================================================================
+
+UnsafeCounter as written
+------------------------
+  trial 1: value = 2,000,000 / 2,000,000  defect =   0.00%  -> NO DEFECT
+  trial 2: value = 2,000,000 / 2,000,000  defect =   0.00%  -> NO DEFECT
+  trial 3: value = 2,000,000 / 2,000,000  defect =   0.00%  -> NO DEFECT
+  trial 4: value = 2,000,000 / 2,000,000  defect =   0.00%  -> NO DEFECT
+  trial 5: value = 2,000,000 / 2,000,000  defect =   0.00%  -> NO DEFECT
+  summary: 0 of 5 trials corrupted, worst-case defect count = 0
+
+========================================================================
+STAGE 3 - PRESCRIBED CODE, SWITCH INTERVAL DRIVEN TO ITS FLOOR
+========================================================================
+sys.setswitchinterval(1e-9) -> effective 0.0 s
+Program logic is unchanged; only the runtime's scheduling granularity
+has been made as fine as the interpreter permits.
+
+UnsafeCounter under maximal preemption pressure
+-----------------------------------------------
+  trial 1: value = 2,000,000 / 2,000,000  defect =   0.00%  -> NO DEFECT
+  trial 2: value = 2,000,000 / 2,000,000  defect =   0.00%  -> NO DEFECT
+  trial 3: value = 2,000,000 / 2,000,000  defect =   0.00%  -> NO DEFECT
+  trial 4: value = 2,000,000 / 2,000,000  defect =   0.00%  -> NO DEFECT
+  trial 5: value = 2,000,000 / 2,000,000  defect =   0.00%  -> NO DEFECT
+  summary: 0 of 5 trials corrupted, worst-case defect count = 0
+
+========================================================================
+STAGE 4 - CONTROL: PREEMPTION POINT INSIDE THE CRITICAL SECTION
+========================================================================
+
+InstrumentedCounter (load and store split by a CALL)
+----------------------------------------------------
+  trial 1: value = 1,274,721 / 2,000,000  defect =  36.26%  -> 725,279 LOST UPDATES
+  trial 2: value = 1,281,812 / 2,000,000  defect =  35.91%  -> 718,188 LOST UPDATES
+  trial 3: value = 1,294,123 / 2,000,000  defect =  35.29%  -> 705,877 LOST UPDATES
+  trial 4: value = 1,230,901 / 2,000,000  defect =  38.45%  -> 769,099 LOST UPDATES
+  trial 5: value = 1,272,345 / 2,000,000  defect =  36.38%  -> 727,655 LOST UPDATES
+  summary: 5 of 5 trials corrupted, worst-case defect count = 769,099
+
+========================================================================
+VERDICT
+========================================================================
+  Stage 2 (as written, 5 ms)      worst defect count = 0
+  Stage 3 (as written, forced)    worst defect count = 0
+  Stage 4 (instrumented, forced)  worst defect count = 769,099
+
+  CONCLUSION: on this runtime the prescribed `self.val += 1` is
+  not interruptible between its load and its store, so it loses
+  no updates. The race condition is nevertheless real: inserting
+  a single preemption point into the same logical operation
+  destroys 38.5% of the increments.
+  The unprotected counter is therefore unsafe by construction and
+  safe only by accident of the current interpreter's instruction
+  dispatch - which is exactly why the lock is not optional.
+
+[wall clock for this invocation: 1.59s]
+
+
+########################################################################
+# TASK 3 - Q3.2 LOCKLESS MAP-REDUCE REDESIGN
+# command: python3 task3_lockless.py
+# started: 10:49:42
+########################################################################
+
+LockedCounter (mutex)      : Value = 2,000,000 | Time: 0.3002s
+Lockless Map-Reduce        : Value = 2,000,000 | Time: 0.0410s
+Speedup over LockedCounter : 7.32x
+Correctness (== 2,000,000)   : PASS
+Performance (>= 2.00x)     : PASS
+
+Determinism check (5 consecutive runs):
+  run 1: value = 2,000,000 | time = 0.0417s | exact
+  run 2: value = 2,000,000 | time = 0.0402s | exact
+  run 3: value = 2,000,000 | time = 0.0373s | exact
+  run 4: value = 2,000,000 | time = 0.0360s | exact
+  run 5: value = 2,000,000 | time = 0.0344s | exact
+
+[wall clock for this invocation: 0.59s]
+
+
+########################################################################
+# TASK 4 - ROOFLINE: COMPUTE VS MEMORY WALL
+# command: python3 task4_roofline.py
+# started: 10:49:43
+########################################################################
+
+=== Compute-Bound Suite (Register Math) ===
+Workers: 1 | Execution Time: 0.8128s
+Workers: 2 | Execution Time: 0.7881s
+Workers: 4 | Execution Time: 0.8372s
+
+=== Memory-Bound Suite (DRAM Bandwidth Saturation) ===
+Workers: 1 | Execution Time: 0.5620s
+Workers: 2 | Execution Time: 0.6238s
+Workers: 4 | Execution Time: 0.9877s
+
+[wall clock for this invocation: 4.78s]
+
+
+########################################################################
+# BONUS TASK - GIL AUTOPSY (T = 1..32)
+# command: python3 bonus_gil.py
+# started: 10:49:48
+########################################################################
+
+OS Reported Logical Cores: 20
+Python Runtime: 3.14.0 (cpython)
+Fixed Total Work: 50,000,000 iterations (strong scaling)
+
+   T | threading.Thread [s] | multiprocessing.Pool [s] | Thread Speedup | Process Speedup
+--------------------------------------------------------------------------------------------
+   1 |               1.8125 |                   2.1487 |          1.00x |           1.00x
+   2 |               1.9200 |                   1.0088 |          0.94x |           2.13x
+   4 |               1.7848 |                   0.6644 |          1.02x |           3.23x
+   8 |               1.9125 |                   0.6177 |          0.95x |           3.48x
+  16 |               1.8701 |                   0.6366 |          0.97x |           3.38x
+  32 |               1.8805 |                   0.8944 |          0.96x |           2.40x
+
+Multiprocessing wall-clock minimum at T = 8 (0.6177s)
+-> Inflection cliff = the first T after this where time increases.
+Wrote bonus_curve.csv for the empirical curve plot.
+
+[wall clock for this invocation: 17.30s]
+
+
+========================================================================
+SUITE COMPLETE - total wall clock 0.7 minutes
+Logfile written: results_230109015.txt
+========================================================================
