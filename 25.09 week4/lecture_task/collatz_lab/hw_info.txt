@@ -1,0 +1,99 @@
+﻿=======================================================================
+ HARDWARE SPECIFICATION DUMP
+ Captured: 2026-09-25 10:05:49
+ Machine : LAPTOP
+=======================================================================
+
+=======================================================================
+ Win32_Processor (worksheet-specified command)
+=======================================================================
+
+
+Name                      : 12th Gen Intel(R) Core(TM) i7-12700H
+NumberOfCores             : 14
+NumberOfLogicalProcessors : 20
+
+=======================================================================
+ Processor detail
+=======================================================================
+
+
+Name                          : 12th Gen Intel(R) Core(TM) i7-12700H
+Manufacturer                  : GenuineIntel
+Description                   : Intel64 Family 6 Model 154 Stepping 3
+Architecture                  : 9
+NumberOfCores                 : 14
+NumberOfLogicalProcessors     : 20
+MaxClockSpeed                 : 2300
+CurrentClockSpeed             : 2300
+L2CacheSize                   : 11776
+L3CacheSize                   : 24576
+SocketDesignation             : U3E1
+VirtualizationFirmwareEnabled : False
+
+=======================================================================
+ Cache hierarchy (Win32_CacheMemory)
+=======================================================================
+
+Purpose  InstalledSize MaxCacheSize BlockSize Level Associativity
+-------  ------------- ------------ --------- ----- -------------
+L1 Cache           288          288      1024     3             9
+L1 Cache           192          192      1024     3             7
+L2 Cache          7680         7680      1024     4             1
+L3 Cache         24576        24576      1024     5             9
+L1 Cache           256          256      1024     3             7
+L1 Cache           512          512      1024     3             7
+L2 Cache          4096         4096      1024     4             8
+L3 Cache         24576        24576      1024     5             9
+
+NOTE: the BlockSize field reported by WMI is not a reliable cache-line
+size on this platform. The architectural coherency line size for x86-64
+(Intel Alder Lake included) is 64 bytes, which is the value used in the
+padding arithmetic of the false-sharing experiment.
+
+=======================================================================
+ Physical memory
+=======================================================================
+
+Manufacturer   Capacity Speed ConfiguredClockSpeed DeviceLocator        SMBIOSMemoryTy
+                                                                                    pe
+------------   -------- ----- -------------------- -------------        --------------
+Samsung      2147483648  6400                 4800 Controller0-ChannelA             35
+Samsung      2147483648  6400                 4800 Controller0-ChannelB             35
+Samsung      2147483648  6400                 4800 Controller0-ChannelC             35
+Samsung      2147483648  6400                 4800 Controller0-ChannelD             35
+Samsung      2147483648  6400                 4800 Controller1-ChannelA             35
+Samsung      2147483648  6400                 4800 Controller1-ChannelB             35
+Samsung      2147483648  6400                 4800 Controller1-ChannelC             35
+Samsung      2147483648  6400                 4800 Controller1-ChannelD             35
+Total physical memory: 15.73 GB
+
+=======================================================================
+ Operating system
+=======================================================================
+
+
+Caption        : Майкрософт Windows 11 Домашняя для одного языка
+Version        : 10.0.26200
+BuildNumber    : 26200
+OSArchitecture : 64-разрядная
+LastBootUpTime : 23.09.2026 9:22:38
+
+=======================================================================
+ Toolchain
+=======================================================================
+gcc --version:
+gcc.exe (GCC) 16.2.0
+Copyright (C) 2026 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+OpenMP runtime threads (omp_get_max_threads) is reported by the
+collatz binary itself at the top of its output.
+
+=======================================================================
+ Relevant environment variables
+=======================================================================
+OMP_NUM_THREADS   = 
+NUMBER_OF_PROCESSORS = 20
+PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 154 Stepping 3, GenuineIntel
